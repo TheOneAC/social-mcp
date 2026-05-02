@@ -133,7 +133,7 @@ Both servers enforce a default rate limit of **1 request/second** with a **daily
 
 ### Account Ban Risk
 
-The underlying CLI tools interact with platform APIs through methods that are not officially supported or authorized. **Using this project may violate the Terms of Service of Xiaohongshu and/or X (Twitter).** If detected, your account may be temporarily or permanently restricted or banned. This risk exists for both the account whose credentials are used and any accounts you interact with.
+The Xiaohongshu server uses browser automation (Playwright) and the Twitter server uses CLI tools to interact with platform APIs through methods that are not officially supported or authorized. **Using this project may violate the Terms of Service of Xiaohongshu and/or X (Twitter).** If detected, your account may be temporarily or permanently restricted or banned. This risk exists for both the account whose credentials are used and any accounts you interact with.
 
 **Recommendations to mitigate risk:**
 - Use a dedicated account (not your primary account) when using this project
@@ -146,7 +146,7 @@ This project is provided "AS IS", without warranty of any kind. The authors and 
 
 ### Security
 
-Your authentication credentials and session tokens are handled by the underlying CLI tools. Review their security practices before use. Never share your tokens or session data with others.
+Your authentication credentials and session tokens are handled locally (Playwright browser context for Xiaohongshu, CLI subprocess for Twitter). Review the respective tools' security practices before use. Never share your tokens or session data with others.
 
 ## Acknowledgements
 
