@@ -2,29 +2,30 @@
 
 > [English](README.md)
 
-小红书 (Xiaohongshu) 和 Twitter/X 的限速 MCP (Model Context Protocol) 适配器。
+基于浏览器自动化的 MCP (Model Context Protocol) 适配器，支持小红书和 Twitter/X。
 
-本项目是对 [xiaohongshu-cli](https://github.com/jackwener/xiaohongshu-cli) 和 [twitter-cli](https://github.com/jackwener/twitter-cli) 的轻量封装，将它们包装成基于 stdio 的 MCP 服务器，使 LLM 智能体（如 Claude Code 等）能够与这两个平台进行交互。
+**小红书服务器** 使用 Playwright (Chromium) 进行完整的浏览器自动化操作——支持扫码登录、笔记发布、评论、点赞、收藏等功能。
+**Twitter 服务器** 封装了 [twitter-cli](https://github.com/jackwener/twitter-cli)，提供限速的 MCP 适配。
 
 ## 前置条件
 
 - Python 3.10+
-- [pipx](https://pipx.pypa.io/)
+- Chromium（Playwright 会自动安装）
 
 ## 安装
 
 ```bash
-# 1. 安装底层 CLI 工具
-pipx install twitter-cli
-pipx install xiaohongshu-cli
-
-# 2. 安装本项目
-git clone https://github.com/<your-org>/social-mcp.git
+# 1. 安装本项目
+git clone https://github.com/TheOneAC/social-mcp.git
 cd social-mcp
 pip install -e .
+python3 -m playwright install chromium
+
+# 2. （可选）Twitter 需要安装底层 CLI 工具
+pipx install twitter-cli
 
 # 或直接从 GitHub 安装：
-# pip install git+https://github.com/<your-org>/social-mcp.git
+# pip install git+https://github.com/TheOneAC/social-mcp.git
 ```
 
 ## 配置
@@ -42,11 +43,7 @@ export TWITTER_CT0="your_ct0_cookie"
 
 ### 小红书
 
-通过 xhs-cli 登录（它会自行管理会话）：
-
-```bash
-xhs login
-```
+使用 MCP 工具的 `login` 命令通过扫码登录。会话会自动持久化到本地磁盘，无需额外配置。
 
 ## 使用
 
@@ -77,7 +74,7 @@ social-mcp-twitter
 }
 ```
 
-### 自定义 CLI 路径
+### 自定义 CLI 路径（仅 Twitter）
 
 通过环境变量覆盖默认的 CLI 路径：
 
@@ -92,16 +89,24 @@ export TWITTER_CLI_PATH="/custom/path/to/twitter"
 
 | 工具 | 说明 |
 |---|---|
+| `login` | 扫码登录（基于浏览器） |
+| `logout` | 清除登录会话 |
+| `status` | 检查登录状态 |
+| `whoami` | 查看当前登录用户信息 |
 | `search` | 按关键词搜索笔记 |
 | `feed` | 浏览推荐流 |
 | `hot` | 按分类浏览热门笔记 |
-| `read` | 通过 ID 或 URL 查看笔记详情 |
+| `read` | 按 ID 查看笔记详情 |
 | `comments` | 查看笔记评论 |
 | `user` | 查看用户信息 |
 | `user-posts` | 列出用户发布的笔记 |
 | `search-user` | 搜索用户 |
-| `status` | 检查登录状态 |
-| `whoami` | 查看当前登录用户信息 |
+| `like` | 点赞/取消点赞笔记 |
+| `favorite` | 收藏/取消收藏笔记 |
+| `comment` | 发表评论 |
+| `reply-comment` | 回复评论 |
+| `delete-note` | 删除自己的笔记 |
+| `publish` | 发布图文或视频笔记 |
 
 ### Twitter
 
@@ -146,7 +151,6 @@ export TWITTER_CLI_PATH="/custom/path/to/twitter"
 
 ## 致谢
 
-- [xiaohongshu-cli](https://github.com/jackwener/xiaohongshu-cli) — Copyright 2024 jackwener (Apache-2.0)
 - [twitter-cli](https://github.com/jackwener/twitter-cli) — Copyright 2024 jackwener (Apache-2.0)
 
 ## 许可证

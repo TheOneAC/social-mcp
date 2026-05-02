@@ -2,30 +2,30 @@
 
 > [中文版](README.zh.md)
 
-Rate-limited MCP (Model Context Protocol) adapters for Xiaohongshu (小红书) and Twitter/X.
+Browser-automated MCP (Model Context Protocol) adapters for Xiaohongshu (小红书) and Twitter/X.
 
-These are thin adapters that wrap [xiaohongshu-cli](https://github.com/jackwener/xiaohongshu-cli) and [twitter-cli](https://github.com/jackwener/twitter-cli) into stdio-based MCP servers, enabling LLM agents (Claude Code, etc.) to interact with both platforms.
+**Xiaohongshu server** uses Playwright (Chromium) for full browser automation — supporting login via QR code, note publishing, commenting, liking, favoriting, and more.  
+**Twitter server** wraps [twitter-cli](https://github.com/jackwener/twitter-cli) into a rate-limited MCP adapter.
 
 ## Prerequisites
 
 - Python 3.10+
-- [pipx](https://pipx.pypa.io/)
+- Chromium (automatically installed by Playwright)
 
 ## Install
 
 ```bash
-# 1. Install the underlying CLI tools
-pipx install twitter-cli
-pipx install xiaohongshu-cli
-
-# 2. Install this project
-git clone https://github.com/<your-org>/social-mcp.git
+# 1. Install this project
+git clone https://github.com/TheOneAC/social-mcp.git
 cd social-mcp
 pip install -e .
+python3 -m playwright install chromium
+
+# 2. (Optional) For Twitter: install the underlying CLI tool
+pipx install twitter-cli
 
 # Or install directly from GitHub:
-# pip install git+https://github.com/<your-org>/social-mcp.git
-```
+# pip install git+https://github.com/TheOneAC/social-mcp.git
 
 ## Configure
 
@@ -42,11 +42,7 @@ export TWITTER_CT0="your_ct0_cookie"
 
 ### Xiaohongshu
 
-Login via xhs-cli (it manages its own session):
-
-```bash
-xhs login
-```
+Use the `login` MCP tool to authenticate via QR code scanning. The session is persisted to disk automatically. No manual configuration needed.
 
 ## Usage
 
@@ -77,9 +73,9 @@ Add to `~/.claude.json` or your project's `.claude.json`:
 }
 ```
 
-### Custom CLI paths
+### Custom CLI paths (Twitter only)
 
-Override the default CLI binary paths via environment variables:
+Override the default Twitter CLI binary path via environment variable:
 
 ```bash
 export XHS_CLI_PATH="/custom/path/to/xhs"
@@ -92,16 +88,24 @@ export TWITTER_CLI_PATH="/custom/path/to/twitter"
 
 | Tool | Description |
 |---|---|
+| `login` | Authenticate via QR code scan (browser-based) |
+| `logout` | Clear saved session |
+| `status` | Check login status |
+| `whoami` | Show current user profile |
 | `search` | Search notes by keyword |
 | `feed` | Browse recommendation feed |
 | `hot` | Browse trending notes by category |
-| `read` | Read a note by ID or URL |
+| `read` | Read a note by ID |
 | `comments` | View comments on a note |
 | `user` | View user profile |
 | `user-posts` | List a user's notes |
 | `search-user` | Search for users |
-| `status` | Check login status |
-| `whoami` | Show current user profile |
+| `like` | Like or unlike a note |
+| `favorite` | Bookmark or unbookmark a note |
+| `comment` | Post a comment on a note |
+| `reply-comment` | Reply to an existing comment |
+| `delete-note` | Delete one of your own notes |
+| `publish` | Publish an image or video note |
 
 ### Twitter
 
@@ -146,7 +150,6 @@ Your authentication credentials and session tokens are handled by the underlying
 
 ## Acknowledgements
 
-- [xiaohongshu-cli](https://github.com/jackwener/xiaohongshu-cli) — Copyright 2024 jackwener (Apache-2.0)
 - [twitter-cli](https://github.com/jackwener/twitter-cli) — Copyright 2024 jackwener (Apache-2.0)
 
 ## License
