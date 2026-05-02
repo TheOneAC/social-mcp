@@ -1,5 +1,7 @@
 # social-mcp
 
+> [中文版](README.zh.md)
+
 Rate-limited MCP (Model Context Protocol) adapters for Xiaohongshu (小红书) and Twitter/X.
 
 These are thin adapters that wrap [xiaohongshu-cli](https://github.com/jackwener/xiaohongshu-cli) and [twitter-cli](https://github.com/jackwener/twitter-cli) into stdio-based MCP servers, enabling LLM agents (Claude Code, etc.) to interact with both platforms.
