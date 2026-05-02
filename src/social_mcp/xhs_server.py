@@ -441,7 +441,7 @@ async def handle_call_tool(name: str, arguments: dict) -> list[TextContent]:
 # ── entry point ────────────────────────────────────────────────────
 
 
-async def main():
+async def _async_main():
     try:
         async with stdio_server() as (read_stream, write_stream):
             await server.run(
@@ -453,7 +453,11 @@ async def main():
         await _browser_mgr.close()
 
 
-if __name__ == "__main__":
+def main():
+    """Synchronous entry point for CLI (pyproject.toml [project.scripts])."""
     import asyncio
+    asyncio.run(_async_main())
 
-    asyncio.run(main())
+
+if __name__ == "__main__":
+    main()
