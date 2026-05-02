@@ -9,24 +9,26 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import TextContent, Tool
 
-from personal_social_mcp._rate_limiter import RateLimiter
+from social_mcp._rate_limiter import RateLimiter
 
 _limiter = RateLimiter(max_per_second=1.0, daily_max=500)
 
+
 def _resolve_xhs_path() -> str:
-    """Resolve xhs-cli binary path: env var > pipx shim > mise-managed."""
+    """Resolve xhs-cli binary path.
+
+    Checks, in order:
+      1. XHS_CLI_PATH env var
+      2. ~/.local/bin/xhs (pipx default)
+    """
     env_path = os.environ.get("XHS_CLI_PATH")
-    if env_path:
+    if env_path and os.path.isfile(env_path):
         return env_path
-    candidates = [
-        os.path.expanduser("~/.local/bin/xhs"),           # pipx shim
-        os.path.expanduser("~/.local/share/mise/installs/python/3.12.13/bin/xhs"),  # mise
-    ]
-    for p in candidates:
-        if os.path.isfile(p):
-            return p
-    # fallback — let subprocess fail with a clear message
-    return candidates[0]
+    pipx_shim = os.path.expanduser("~/.local/bin/xhs")
+    if os.path.isfile(pipx_shim):
+        return pipx_shim
+    return pipx_shim  # fallback — lets subprocess fail with a clear error
+
 
 _XHS_PATH = _resolve_xhs_path()
 
@@ -119,7 +121,7 @@ async def handle_list_tools() -> list[Tool]:
         ),
         Tool(
             name="comments",
-            description="View comments on a note by ID, URL, or short index.",
+            description="View comments on a note.",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -127,7 +129,7 @@ async def handle_list_tools() -> list[Tool]:
                     "xsec_token": {"type": "string", "description": "Security token"},
                     "all": {
                         "type": "boolean",
-                        "description": "Auto-paginate to fetch ALL comments",
+                        "description": "Auto-paginate to fetch all comments",
                         "default": False,
                     },
                 },
@@ -173,12 +175,12 @@ async def handle_list_tools() -> list[Tool]:
         ),
         Tool(
             name="status",
-            description="Check current login status and user info.",
+            description="Check current login status.",
             inputSchema={"type": "object", "properties": {}},
         ),
         Tool(
             name="whoami",
-            description="Show detailed profile of current user (level, fans, likes).",
+            description="Show detailed profile of current user.",
             inputSchema={"type": "object", "properties": {}},
         ),
     ]

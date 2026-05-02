@@ -5,12 +5,11 @@ from __future__ import annotations
 import os
 import subprocess
 
-import yaml
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import TextContent, Tool
 
-from personal_social_mcp._rate_limiter import RateLimiter
+from social_mcp._rate_limiter import RateLimiter
 
 _limiter = RateLimiter(max_per_second=1.0, daily_max=500)
 
@@ -20,43 +19,11 @@ _TWITTER_PATH = os.environ.get(
 )
 
 
-def _load_credentials() -> tuple[str, str]:
-    """Load Twitter auth token and ct0 from config files or env vars.
-
-    Precedence: credentials.yaml > env vars > agent-reach config.yaml.
-    """
-    # 1. Primary: ~/.config/mcp-creds/twitter.yaml
-    for path in (
-        os.path.expanduser("~/.config/mcp-creds/twitter.yaml"),
-        os.path.expanduser("~/.agent-reach/config.yaml"),
-    ):
-        if os.path.exists(path):
-            try:
-                with open(path) as f:
-                    creds = yaml.safe_load(f)
-                if "auth_token" in creds or "twitter_auth_token" in creds:
-                    return (
-                        creds.get("auth_token") or creds.get("twitter_auth_token", ""),
-                        creds.get("ct0") or creds.get("twitter_ct0", ""),
-                    )
-            except Exception:
-                pass
-
-    # 2. Fallback: environment variables
-    return (
-        os.environ.get("TWITTER_AUTH_TOKEN", ""),
-        os.environ.get("TWITTER_CT0", ""),
-    )
-
-
-_AUTH_TOKEN, _CT0 = _load_credentials()
-
-
 def _run_twitter(args: list[str]) -> str:
     """Run twitter-cli with the given args and return stdout."""
     env = os.environ.copy()
-    env["TWITTER_AUTH_TOKEN"] = _AUTH_TOKEN
-    env["TWITTER_CT0"] = _CT0
+    env["TWITTER_AUTH_TOKEN"] = os.environ.get("TWITTER_AUTH_TOKEN", "")
+    env["TWITTER_CT0"] = os.environ.get("TWITTER_CT0", "")
 
     shim_dir = os.path.expanduser("~/.local/bin")
     path = env.get("PATH", "")
@@ -84,11 +51,11 @@ async def handle_list_tools() -> list[Tool]:
     return [
         Tool(
             name="search",
-            description="Search tweets by query string with optional advanced filters.",
+            description="Search tweets by query string with optional filters.",
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "query": {"type": "string", "description": "Search query (supports operators like from:, lang:, etc.)"},
+                    "query": {"type": "string", "description": "Search query (supports operators like from:, lang:)"},
                     "limit": {"type": "integer", "description": "Number of results (default 10, max 20)", "default": 10},
                     "from": {"type": "string", "description": "Only tweets from this user (without @)"},
                     "to": {"type": "string", "description": "Only tweets directed at this user (without @)"},
@@ -98,7 +65,7 @@ async def handle_list_tools() -> list[Tool]:
                     "type": {
                         "type": "string",
                         "enum": ["top", "latest", "photos", "videos"],
-                        "description": "Search tab: Top, Latest, Photos, or Videos",
+                        "description": "Search tab",
                     },
                     "exclude_retweets": {"type": "boolean", "description": "Exclude retweets", "default": False},
                     "exclude_replies": {"type": "boolean", "description": "Exclude replies", "default": False},
