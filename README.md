@@ -8,20 +8,29 @@ This is a thin MCP (Model Context Protocol) adapter layer on top of
 stdio-based MCP servers that let LLM agents (Claude Code, etc.) search, read, and
 interact with both platforms.
 
+**该项目本身只是一个薄包装层，不包含底层 CLI。** 要让它真正工作，你必须先单独安装对应的命令行工具。
+
+| 平台 | 所需 CLI | 安装方式 |
+|---|---|---|
+| Twitter/X | [twitter-cli](https://github.com/jackwener/twitter-cli) | `pipx install twitter-cli` |
+| 小红书 | [xiaohongshu-cli](https://github.com/jackwener/xiaohongshu-cli) | `pipx install xiaohongshu-cli` |
+
+安装完成后，底层 CLI 的可执行文件会自动出现在 `~/.local/bin/` 下。
+
 ## Prerequisites
 
 - Python >= 3.10
 - [pipx](https://pipx.pypa.io/) (for installing the underlying CLIs)
-- `uv` (recommended) or `pip`
+- `pip` (or `uv`)
 
 ## Install
 
 ```bash
-# 1. Install the underlying CLIs
+# 1. 先安装底层 CLI（必须）
 pipx install twitter-cli
 pipx install xiaohongshu-cli
 
-# 2. Clone and install this project
+# 2. 再安装本项目
 git clone https://github.com/<your>/personal-social-mcp.git
 cd personal-social-mcp
 pip install -e .

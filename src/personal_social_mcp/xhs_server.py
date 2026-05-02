@@ -13,10 +13,22 @@ from personal_social_mcp._rate_limiter import RateLimiter
 
 _limiter = RateLimiter(max_per_second=1.0, daily_max=500)
 
-_XHS_PATH = os.environ.get(
-    "XHS_CLI_PATH",
-    os.path.expanduser("~/.local/share/mise/installs/python/3.12.13/bin/xhs"),
-)
+def _resolve_xhs_path() -> str:
+    """Resolve xhs-cli binary path: env var > pipx shim > mise-managed."""
+    env_path = os.environ.get("XHS_CLI_PATH")
+    if env_path:
+        return env_path
+    candidates = [
+        os.path.expanduser("~/.local/bin/xhs"),           # pipx shim
+        os.path.expanduser("~/.local/share/mise/installs/python/3.12.13/bin/xhs"),  # mise
+    ]
+    for p in candidates:
+        if os.path.isfile(p):
+            return p
+    # fallback — let subprocess fail with a clear message
+    return candidates[0]
+
+_XHS_PATH = _resolve_xhs_path()
 
 
 def _run_xhs(args: list[str]) -> str:
