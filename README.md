@@ -123,9 +123,14 @@ Both servers enforce a default rate limit of **1 request/second** with a **daily
 
 ## Disclaimer
 
-This project is **not affiliated with Xiaohongshu, X (Twitter), or Bilibili**.
+This project is **not affiliated with Xiaohongshu or X (Twitter)**.
 
 The underlying CLI tools work through reverse-engineered API endpoints. Use at your own risk. See their respective repositories for license and legal details.
+
+## Acknowledgements
+
+- [xiaohongshu-cli](https://github.com/jackwener/xiaohongshu-cli) — Copyright 2024 jackwener (Apache-2.0)
+- [twitter-cli](https://github.com/jackwener/twitter-cli) — Copyright 2024 jackwener (Apache-2.0)
 
 ## License
 
