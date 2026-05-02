@@ -121,11 +121,26 @@ export TWITTER_CLI_PATH="/custom/path/to/twitter"
 
 Both servers enforce a default rate limit of **1 request/second** with a **daily cap of 500 requests**. These can be adjusted in the `RateLimiter` constructor in each server file.
 
-## Disclaimer
+## Disclaimer & Risk
 
-This project is **not affiliated with Xiaohongshu or X (Twitter)**.
+**This project is not affiliated with, endorsed by, or connected to Xiaohongshu or X (Twitter).**
 
-The underlying CLI tools work through reverse-engineered API endpoints. Use at your own risk. See their respective repositories for license and legal details.
+### Account Ban Risk
+
+The underlying CLI tools interact with platform APIs through methods that are not officially supported or authorized. **Using this project may violate the Terms of Service of Xiaohongshu and/or X (Twitter).** If detected, your account may be temporarily or permanently restricted or banned. This risk exists for both the account whose credentials are used and any accounts you interact with.
+
+**Recommendations to mitigate risk:**
+- Use a dedicated account (not your primary account) when using this project
+- Respect the built-in rate limits — aggressive usage increases detection risk
+- Be aware that platform detection techniques may improve over time
+
+### No Warranty
+
+This project is provided "AS IS", without warranty of any kind. The authors and contributors are not liable for any account actions taken against you (including but not limited to suspension, restriction, or permanent ban) resulting from the use of this software.
+
+### Security
+
+Your authentication credentials and session tokens are handled by the underlying CLI tools. Review their security practices before use. Never share your tokens or session data with others.
 
 ## Acknowledgements
 
